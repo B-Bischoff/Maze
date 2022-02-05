@@ -216,6 +216,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1224414460}
   - component: {fileID: 1224414461}
+  - component: {fileID: 1224414462}
   m_Layer: 0
   m_Name: MazeGenerator
   m_TagString: Untagged
@@ -244,14 +245,36 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1224414459}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bb8c3be57cea9504089ed2d77044088a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  delay: 0.01
+  width: 50
+  height: 50
   Wall: {fileID: 406148476472698802, guid: c436d6fe56936484d989ede2e8c6202b, type: 3}
   Ground: {fileID: 7475280904032706727, guid: 5f6d5565a42ae0a4ea161e74ed9565e2, type: 3}
-  Cube: {fileID: 3563276683025105389, guid: 3e4150e2691b62049b1af7e7d109fba7, type: 3}
+--- !u!114 &1224414462
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1224414459}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0de98f4b9e48ee045acb993937271ce4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  chamberNbr: 2
+  width: 20
+  height: 20
+  delay: 0.025
+  randomChamber: 0
+  Ground: {fileID: 7475280904032706727, guid: 5f6d5565a42ae0a4ea161e74ed9565e2, type: 3}
+  vertWall: {fileID: 6758546157581213950, guid: c0e6cbf8db02dec49b5f86405aa53ca2, type: 3}
+  horWall: {fileID: 6758546157581213950, guid: 6870cd6553b90ae4c99daf40b4c64d0d, type: 3}
 --- !u!1 &1716308439
 GameObject:
   m_ObjectHideFlags: 0
