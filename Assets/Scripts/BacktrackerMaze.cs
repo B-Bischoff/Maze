@@ -7,12 +7,15 @@ public class BacktrackerMaze : MonoBehaviour
     [Header("Algorithm parameters")]
     public float delay = 0.01f;
     public int width, height;
+    public bool visualMode;
 
     [Header("Prefabs")]
     public GameObject Wall;
     public GameObject Ground;
+    public GameObject visualPlane;
 
     private MazeCell[,] _maze;
+    private GameObject _visualPlane;
 
     public class MazeCell
     {
@@ -36,10 +39,10 @@ public class BacktrackerMaze : MonoBehaviour
             return;
         }
         _maze = new MazeCell[height, width];
-        CreateMaze(width, height);
+        CreateMaze();
     }
 
-    void CreateMaze(int width, int height)
+    void CreateMaze()
     {
         List<MazeCell> stack = new List<MazeCell>();
 
@@ -73,6 +76,12 @@ public class BacktrackerMaze : MonoBehaviour
         _maze[0, 0].visited = 1;
         stack.Add(_maze[0, 0]);
 
+        if (visualMode)
+		{
+            Vector3 pos = new Vector3(_maze[0, 0].x + .5f, .1f, _maze[0, 0].y + .5f);
+            _visualPlane = Instantiate(visualPlane, pos, Quaternion.identity);
+		}
+
         StartCoroutine(BreakWalls(stack, height, width));
     }
 
@@ -105,6 +114,13 @@ public class BacktrackerMaze : MonoBehaviour
                     DestroyWalls(currentCell.RightWall, neighborCell.LeftWall);
                 else
                     DestroyWalls(currentCell.LeftWall, neighborCell.RightWall);
+
+                if (visualMode)
+                {
+                    Vector3 pos = new Vector3(neighborCell.x + .5f, .1f, neighborCell.y + .5f);
+                    _visualPlane.transform.position = pos;
+                }
+
                 yield return new WaitForSeconds(delay);
             }
         }

@@ -217,6 +217,9 @@ GameObject:
   - component: {fileID: 1224414460}
   - component: {fileID: 1224414461}
   - component: {fileID: 1224414462}
+  - component: {fileID: 1224414463}
+  - component: {fileID: 1224414464}
+  - component: {fileID: 1224414465}
   m_Layer: 0
   m_Name: MazeGenerator
   m_TagString: Untagged
@@ -253,9 +256,70 @@ MonoBehaviour:
   delay: 0.01
   width: 50
   height: 50
+  visualMode: 0
   Wall: {fileID: 406148476472698802, guid: c436d6fe56936484d989ede2e8c6202b, type: 3}
   Ground: {fileID: 7475280904032706727, guid: 5f6d5565a42ae0a4ea161e74ed9565e2, type: 3}
+  visualPlane: {fileID: 4238776282952596734, guid: 83cb9e43bd977b64dadfebbbbe59a0a8, type: 3}
 --- !u!114 &1224414462
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1224414459}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0de98f4b9e48ee045acb993937271ce4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  chamberNbr: 20
+  width: 100
+  height: 100
+  delay: 0.025
+  randomChamber: 1
+  Ground: {fileID: 7475280904032706727, guid: 5f6d5565a42ae0a4ea161e74ed9565e2, type: 3}
+  vertWall: {fileID: 6758546157581213950, guid: c0e6cbf8db02dec49b5f86405aa53ca2, type: 3}
+  horWall: {fileID: 6758546157581213950, guid: 6870cd6553b90ae4c99daf40b4c64d0d, type: 3}
+--- !u!114 &1224414463
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1224414459}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7bb8873d99feed340b96f5cdaad48e81, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  width: 50
+  height: 50
+  delay: 0.012
+  visualMode: 1
+  Wall: {fileID: 406148476472698802, guid: c436d6fe56936484d989ede2e8c6202b, type: 3}
+  Ground: {fileID: 7475280904032706727, guid: 5f6d5565a42ae0a4ea161e74ed9565e2, type: 3}
+  frontierVisu: {fileID: 4238776282952596734, guid: 83cb9e43bd977b64dadfebbbbe59a0a8, type: 3}
+  visitedVisu: {fileID: 4503030096242140233, guid: 4721894bdca5b474f92260f5aa4ff462, type: 3}
+--- !u!114 &1224414464
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1224414459}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfd55dec0d34e2547955d5c6771e7fea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  delay: 0.01
+  width: 50
+  height: 50
+  visualMode: 1
+  Wall: {fileID: 406148476472698802, guid: c436d6fe56936484d989ede2e8c6202b, type: 3}
+  Ground: {fileID: 7475280904032706727, guid: 5f6d5565a42ae0a4ea161e74ed9565e2, type: 3}
+  visualPlane: {fileID: 4238776282952596734, guid: 83cb9e43bd977b64dadfebbbbe59a0a8, type: 3}
+--- !u!114 &1224414465
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -264,17 +328,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 1224414459}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0de98f4b9e48ee045acb993937271ce4, type: 3}
+  m_Script: {fileID: 11500000, guid: d17e6eab1b4537642ad8c293eac843d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chamberNbr: 2
+  delay: 0.005
   width: 20
   height: 20
-  delay: 0.025
-  randomChamber: 0
+  maxDepth: 20
+  visualMode: 1
   Ground: {fileID: 7475280904032706727, guid: 5f6d5565a42ae0a4ea161e74ed9565e2, type: 3}
   vertWall: {fileID: 6758546157581213950, guid: c0e6cbf8db02dec49b5f86405aa53ca2, type: 3}
   horWall: {fileID: 6758546157581213950, guid: 6870cd6553b90ae4c99daf40b4c64d0d, type: 3}
+  planeA: {fileID: 4238776282952596734, guid: 83cb9e43bd977b64dadfebbbbe59a0a8, type: 3}
+  planeB: {fileID: 4503030096242140233, guid: 4721894bdca5b474f92260f5aa4ff462, type: 3}
 --- !u!1 &1716308439
 GameObject:
   m_ObjectHideFlags: 0
