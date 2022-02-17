@@ -53,15 +53,6 @@ public class HexagonalGrid : MonoBehaviour
 				Debug.Log("Wrong grid mode");
 				break;
 		}
-
-		foreach (GameObject wall in maze[5, 5].walls)
-			Destroy(wall);
-		foreach (GameObject wall in maze[6, 5].walls)
-			Destroy(wall);
-		foreach (GameObject wall in maze[5, 6].walls)
-			Destroy(wall);
-		foreach (GameObject wall in maze[6, 6].walls)
-			Destroy(wall);
 	}
 
 	public void CreateSquareFlat(float hexHeight, float hexWidth, int height, int width)
@@ -112,20 +103,36 @@ public class HexagonalGrid : MonoBehaviour
 
 	public void CreateHexFlat(float hexHeight, int radius)
 	{
-		for (int q = -radius; q <= radius; q++)
+		// Array initialization
+		maze = new MazeCell[radius * 2 + 1, radius * 2 + 1];
+
+		for (int q = radius; q >= -radius; q--)
 		{
 			int r1 = Mathf.Max(-radius, -q - radius);
 			int r2 = Mathf.Min(radius, -q + radius);
 			for (int r = r1; r <= r2; r++)
 			{
 				Vector3 pos = new Vector3((-q - r) * .95f, 0, (q - r) * (hexHeight / 2f));
-				Instantiate(hexa_flat, pos, Quaternion.identity).transform.parent = transform;
+				GameObject walls = Instantiate(hexa_flat, pos, Quaternion.identity);
+
+				walls.transform.parent = transform;
+
+				// Converting world position to array position
+				int x = q + radius;
+				int y = r + x;
+
+				// Cell initialization
+				maze[y, x] = new MazeCell(x, y);
+				AssignWallToMazeCell(maze[y, x], walls);
 			}
 		}
 	}
 
 	public void CreateHexPointy(float hexHeight, int radius)
 	{
+		// Array initialization
+		maze = new MazeCell[radius * 2 + 1, radius * 2 + 1];
+
 		for (int q = -radius; q <= radius; q++)
 		{
 			int r1 = Mathf.Max(-radius, -q - radius);
@@ -133,7 +140,17 @@ public class HexagonalGrid : MonoBehaviour
 			for (int r = r1; r <= r2; r++)
 			{
 				Vector3 pos = new Vector3((q - r) * (hexHeight / 2f), 0, (-q - r) * .95f);
-				Instantiate(hexa_pointy, pos, Quaternion.identity).transform.parent = transform;
+
+				GameObject walls = Instantiate(hexa_pointy, pos, Quaternion.identity);
+				walls.transform.parent = transform;
+
+				// Converting world position to array position
+				int x = q + radius;
+				int y = r + x;
+
+				// Cell initialization
+				maze[y, x] = new MazeCell(x, y);
+				AssignWallToMazeCell(maze[y, x], walls);
 			}
 		}
 	}
