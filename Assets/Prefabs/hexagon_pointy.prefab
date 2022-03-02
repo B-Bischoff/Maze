@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2052397731479157716}
   - component: {fileID: 5841323589613217008}
   m_Layer: 0
-  m_Name: Cylinder.006
+  m_Name: Cylinder.005
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -93,7 +93,7 @@ GameObject:
   - component: {fileID: 7474789893814820696}
   - component: {fileID: 4367832790444320755}
   m_Layer: 0
-  m_Name: Cylinder.004
+  m_Name: Cylinder.003
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -210,7 +210,7 @@ GameObject:
   - component: {fileID: 8491959744296193994}
   - component: {fileID: 9117935631087281980}
   m_Layer: 0
-  m_Name: Cylinder.001
+  m_Name: Cylinder.000
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -291,7 +291,7 @@ GameObject:
   - component: {fileID: 10698778591488425}
   - component: {fileID: 5080367492181271320}
   m_Layer: 0
-  m_Name: Cylinder.003
+  m_Name: Cylinder.002
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -372,7 +372,7 @@ GameObject:
   - component: {fileID: 2142196460672194091}
   - component: {fileID: 4529517765956750689}
   m_Layer: 0
-  m_Name: Cylinder.002
+  m_Name: Cylinder.001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -453,7 +453,7 @@ GameObject:
   - component: {fileID: 2379867168082752434}
   - component: {fileID: 3655030268540654514}
   m_Layer: 0
-  m_Name: Cylinder.005
+  m_Name: Cylinder.004
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

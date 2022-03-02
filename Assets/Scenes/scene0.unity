@@ -253,10 +253,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb8c3be57cea9504089ed2d77044088a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  delay: 0.01
-  width: 20
-  height: 20
-  visualMode: 0
+  delay: 0.25
+  width: 100
+  height: 100
+  visualMode: 1
   Wall: {fileID: 406148476472698802, guid: c436d6fe56936484d989ede2e8c6202b, type: 3}
   Ground: {fileID: 7475280904032706727, guid: 5f6d5565a42ae0a4ea161e74ed9565e2, type: 3}
   visualPlane: {fileID: 4238776282952596734, guid: 83cb9e43bd977b64dadfebbbbe59a0a8, type: 3}
@@ -273,10 +273,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chamberNbr: 20
-  width: 20
-  height: 20
+  width: 100
+  height: 100
   delay: 0.025
-  randomChamber: 1
+  randomChamber: 0
   Ground: {fileID: 7475280904032706727, guid: 5f6d5565a42ae0a4ea161e74ed9565e2, type: 3}
   vertWall: {fileID: 6758546157581213950, guid: c0e6cbf8db02dec49b5f86405aa53ca2, type: 3}
   horWall: {fileID: 6758546157581213950, guid: 6870cd6553b90ae4c99daf40b4c64d0d, type: 3}
@@ -292,9 +292,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7bb8873d99feed340b96f5cdaad48e81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  width: 20
-  height: 20
-  delay: 0.012
+  width: 50
+  height: 50
+  delay: 0.1
   visualMode: 1
   Wall: {fileID: 406148476472698802, guid: c436d6fe56936484d989ede2e8c6202b, type: 3}
   Ground: {fileID: 7475280904032706727, guid: 5f6d5565a42ae0a4ea161e74ed9565e2, type: 3}
@@ -312,7 +312,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dfd55dec0d34e2547955d5c6771e7fea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  delay: 0.01
+  delay: 0.1
   width: 20
   height: 20
   visualMode: 1
@@ -444,6 +444,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1749744711}
   - component: {fileID: 1749744710}
+  - component: {fileID: 1749744712}
   m_Layer: 0
   m_Name: HexagonalMazeGenerator
   m_TagString: Untagged
@@ -465,10 +466,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hexa_pointy: {fileID: 5943944843410764312, guid: 1c45994790c3e734ba3df87cb776227a, type: 3}
   hexa_flat: {fileID: 5943944843410764312, guid: d9fceaba80aa75449ae2d01f8012e199, type: 3}
-  GridMode: 0
-  Diameter: 5
-  Height: 20
+  GridMode: 2
+  Diameter: 20
+  Height: 5
   Width: 10
+  visualMode: 0
 --- !u!4 &1749744711
 Transform:
   m_ObjectHideFlags: 0
@@ -483,3 +485,16 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1749744712
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1749744709}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c20bfb2266e7a74da5af31efd12e6cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  grid: {fileID: 1749744710}

@@ -130,22 +130,22 @@ public class RecursiveMaze : MonoBehaviour
         //  Top left chamber
         Vector2 chamber1BottomLeft = new Vector2(bottomLeft.x, y);
         Vector2 chamber1TopRight = new Vector2(x, topRight.y);
-        yield return StartCoroutine(CreateMaze(chamber1BottomLeft, chamber1TopRight, chamber));
+        StartCoroutine(CreateMaze(chamber1BottomLeft, chamber1TopRight, chamber));
 
         // Bottom left chamber
         Vector2 chamber2BottomLeft = new Vector2(bottomLeft.x, bottomLeft.y);
         Vector2 chamber2TopRight = new Vector2(x, y);
-        yield return StartCoroutine(CreateMaze(chamber2BottomLeft, chamber2TopRight, chamber));
+        StartCoroutine(CreateMaze(chamber2BottomLeft, chamber2TopRight, chamber));
 
         // Top right chamber
         Vector2 chamber3BottomLeft = new Vector2(x, y);
         Vector2 chamber3TopRight = new Vector2(topRight.x, topRight.y);
-         yield return StartCoroutine(CreateMaze(chamber3BottomLeft, chamber3TopRight, chamber));
+        StartCoroutine(CreateMaze(chamber3BottomLeft, chamber3TopRight, chamber));
 
         // Bottom left chamber
         Vector2 chamber4BottomLeft = new Vector2(x, bottomLeft.y);
         Vector2 chamber4TopRight = new Vector2(topRight.x, y);
-        yield return StartCoroutine(CreateMaze(chamber4BottomLeft, chamber4TopRight, chamber));
+        StartCoroutine(CreateMaze(chamber4BottomLeft, chamber4TopRight, chamber));
 
         yield break;
     }        
