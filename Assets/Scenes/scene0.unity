@@ -248,14 +248,14 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1224414459}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bb8c3be57cea9504089ed2d77044088a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   delay: 0.25
-  width: 100
-  height: 100
+  width: 10
+  height: 10
   visualMode: 1
   Wall: {fileID: 406148476472698802, guid: c436d6fe56936484d989ede2e8c6202b, type: 3}
   Ground: {fileID: 7475280904032706727, guid: 5f6d5565a42ae0a4ea161e74ed9565e2, type: 3}
@@ -267,7 +267,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1224414459}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0de98f4b9e48ee045acb993937271ce4, type: 3}
   m_Name: 
@@ -464,13 +464,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51697d21de0128e4e9ad866fc16b5f0b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hexa_pointy: {fileID: 5943944843410764312, guid: 1c45994790c3e734ba3df87cb776227a, type: 3}
-  hexa_flat: {fileID: 5943944843410764312, guid: d9fceaba80aa75449ae2d01f8012e199, type: 3}
-  GridMode: 2
-  Diameter: 20
-  Height: 5
+  hexagon: {fileID: 5943944843410764312, guid: d9fceaba80aa75449ae2d01f8012e199, type: 3}
+  hexa_plane: {fileID: 7323562528176549476, guid: 2cd7ea08bd5e6f1459fb5848b68b113b, type: 3}
+  GridMode: 1
+  Diameter: 7
+  Height: 10
   Width: 10
-  visualMode: 0
+  visualMode: 1
+  hexHeight: 1.1
+  hexWidth: 0.95
 --- !u!4 &1749744711
 Transform:
   m_ObjectHideFlags: 0
@@ -498,3 +500,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   grid: {fileID: 1749744710}
+  visualPlane: {fileID: 7323562528176549476, guid: 0c90ee445c3679f44b856783c5d59bdf, type: 3}
+  _delay: 0.05

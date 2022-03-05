@@ -5,18 +5,15 @@ using UnityEngine;
 public class Backtracker : MonoBehaviour
 {
 	public HexagonalGrid grid;
+    public GameObject visualPlane;
+    public float _delay = .01f;
 
 	private MazeCell[,] _maze;
 	private int _height, _width;
     private bool _visualMode;
-    private float _delay = .01f;
-    private bool _isGenerating;
+    private bool _isGenerating = false;
     private int _hexagonalShape; // 0 : flat | 1 : pointy 
-
-	private void Start()
-	{
-        _isGenerating = false;
-	}
+    private GameObject _visualPlane;
 
 	private void Update()
 	{
@@ -37,34 +34,28 @@ public class Backtracker : MonoBehaviour
 
         CreateMaze();
 	}
-
-    void Test(MazeCell cell)
-	{
-        foreach (GameObject go in cell.walls)
-            Destroy(go);
-	}
-
     void CreateMaze()
     {
         List<MazeCell> stack = new List<MazeCell>();
 
         // Setting up initial cell
+        int y_start = 0;
+        int x_start = 0;
+
         if (grid.Diameter != 0)
         {
-            _maze[_height / 2, _width / 2].visited = 1;
-            stack.Add(_maze[_height / 2, _width / 2]);
-        }
-        else
-		{
-            _maze[0, 0].visited = 1;
-            stack.Add(_maze[0, 0]);
+            y_start = _height / 2;
+            x_start = _width / 2;
         }
 
         if (_visualMode)
         {
-            //Vector3 pos = new Vector3(_maze[0, 0].x + .5f, .1f, _maze[0, 0].y + .5f);
-            //_visualPlane = Instantiate(visualPlane, pos, Quaternion.identity);
+            Vector3 pos = new Vector3(x_start, .1f, y_start);
+            _visualPlane = Instantiate(visualPlane, pos, Quaternion.Euler(0f, 90f * (_hexagonalShape + 1), 0f));
         }
+
+        _maze[y_start, x_start].visited = 1;
+        stack.Add(_maze[y_start, x_start]);
 
         StartCoroutine(BreakWalls(stack, _height, _width));
     }
@@ -87,23 +78,21 @@ public class Backtracker : MonoBehaviour
                 stack.Add(neighborCell);
                 neighborCell.visited = 1;
 
-                Debug.Log("current cell y " + currentCell.y + " x " + currentCell.x);
-
-                // Remove walls<
+                // Remove walls
                 Vector2 dir = new Vector2(currentCell.x - neighborCell.x, currentCell.y - neighborCell.y);
 
                 if (_hexagonalShape == 0) // Flat
 				{
+                    if (dir.y == -1 && dir.x == 0)
+                        DestroyWalls(currentCell.walls[1], neighborCell.walls[4]);
+                    else if (dir.y == 1 && dir.x == 0)
+                        DestroyWalls(currentCell.walls[4], neighborCell.walls[1]);
                     if (currentCell.x % 2 == 0)
                     {
-                        if (dir.y == -1 && dir.x == 0)
-                            DestroyWalls(currentCell.walls[1], neighborCell.walls[4]);
-                        else if (dir.y == 0 && dir.x == -1)
+                        if (dir.y == 0 && dir.x == -1)
                             DestroyWalls(currentCell.walls[2], neighborCell.walls[5]);
                         else if (dir.y == 1 && dir.x == -1)
                             DestroyWalls(currentCell.walls[3], neighborCell.walls[0]);
-                        else if (dir.y == 1 && dir.x == 0)
-                            DestroyWalls(currentCell.walls[4], neighborCell.walls[1]);
                         else if (dir.y == 1 && dir.x == 1)
                             DestroyWalls(currentCell.walls[5], neighborCell.walls[2]);
                         else if (dir.y == 0 && dir.x == 1)
@@ -113,32 +102,28 @@ public class Backtracker : MonoBehaviour
 					{
                         if (dir.y == -1 && dir.x == -1)
                             DestroyWalls(currentCell.walls[2], neighborCell.walls[5]);
-                        else if (dir.y == -1 && dir.x == 0)
-                            DestroyWalls(currentCell.walls[1], neighborCell.walls[4]);
                         else if (dir.y == -1 && dir.x == 1)
                             DestroyWalls(currentCell.walls[0], neighborCell.walls[3]);
                         else if (dir.y == 0 && dir.x == 1)
                             DestroyWalls(currentCell.walls[5], neighborCell.walls[2]);
-                        else if (dir.y == 1 && dir.x == 0)
-                            DestroyWalls(currentCell.walls[4], neighborCell.walls[1]);
                         else if (dir.y == 0 && dir.x == -1)
                             DestroyWalls(currentCell.walls[3], neighborCell.walls[0]);
                     }
                 }
                 else // Pointy
 				{
+                    if (dir.y == 0 && dir.x == -1)
+                        DestroyWalls(currentCell.walls[1], neighborCell.walls[4]);
+                    else if (dir.y == 0 && dir.x == 1)
+                        DestroyWalls(currentCell.walls[4], neighborCell.walls[1]);
                     if (currentCell.y % 2 == 0)
                     {
                         if (dir.y == -1 && dir.x == 0)
                             DestroyWalls(currentCell.walls[0], neighborCell.walls[3]);
-                        else if (dir.y == 0 && dir.x == -1)
-                            DestroyWalls(currentCell.walls[1], neighborCell.walls[4]);
                         else if (dir.y == 1 && dir.x == 0)
                             DestroyWalls(currentCell.walls[2], neighborCell.walls[5]);
                         else if (dir.y == 1 && dir.x == 1)
                             DestroyWalls(currentCell.walls[3], neighborCell.walls[0]);
-                        else if (dir.y == 0 && dir.x == 1)
-                            DestroyWalls(currentCell.walls[4], neighborCell.walls[1]);
                         else if (dir.y == -1 && dir.x == 1)
                             DestroyWalls(currentCell.walls[5], neighborCell.walls[2]);
                     }
@@ -146,14 +131,10 @@ public class Backtracker : MonoBehaviour
                     {
                         if (dir.y == -1 && dir.x == -1)
                             DestroyWalls(currentCell.walls[0], neighborCell.walls[3]);
-                        else if (dir.y == 0 && dir.x == -1)
-                            DestroyWalls(currentCell.walls[1], neighborCell.walls[4]);
                         else if (dir.y == 1 && dir.x == -1)
                             DestroyWalls(currentCell.walls[2], neighborCell.walls[5]);
                         else if (dir.y == 1 && dir.x == 0)
                             DestroyWalls(currentCell.walls[3], neighborCell.walls[0]);
-                        else if (dir.y == 0 && dir.x == 1)
-                            DestroyWalls(currentCell.walls[4], neighborCell.walls[1]);
                         else if (dir.y == -1 && dir.x == 0)
                             DestroyWalls(currentCell.walls[5], neighborCell.walls[2]);
                     }
@@ -161,27 +142,16 @@ public class Backtracker : MonoBehaviour
 
                 if (_visualMode)
                 {
-                    //Vector3 pos = new Vector3(neighborCell.x + .5f, .1f, neighborCell.y + .5f);
-                    //_visualPlane.transform.position = pos;
+                    Vector3 pos;
+                    if (_hexagonalShape == 0)
+                        pos = new Vector3(neighborCell.x * grid.hexWidth, .1f, neighborCell.y * grid.hexHeight + .5f * (neighborCell.x % 2));
+                    else
+                        pos = new Vector3(neighborCell.x * grid.hexHeight + .5f * (neighborCell.y % 2), .1f, neighborCell.y * grid.hexWidth);
+                    _visualPlane.transform.position = pos;
                 }
-
                 yield return new WaitForSeconds(_delay);
             }
         }
-
-        // Removing colliding walls
-        /*
-        for (int i = 0; i < height; i++)
-        {
-            for (int j = 0; j < width; j++)
-            {
-                if (j < width - 1 && _maze[i, j].RightWall != null && _maze[i, j + 1].LeftWall != null)
-                    Destroy(_maze[i, j].RightWall);
-                if (i < height - 1 && _maze[i, j].TopWall != null && _maze[i + 1, j].BottomWall != null)
-                    Destroy(_maze[i, j].TopWall);
-            }
-        }
-        */
     }
 
     void DestroyWalls(GameObject wall1, GameObject wall2)
@@ -190,80 +160,68 @@ public class Backtracker : MonoBehaviour
         Destroy(wall2);
     }
 
+    bool IsValidCell(int y, int x)
+	{
+        if (x < 0 || x >= _width)
+            return (false);
+        if (y < 0 || y >= _height)
+            return (false);
+        if (_maze[y, x] == null)
+            return (false);
+        if (_maze[y, x].visited == 1)
+            return (false);
+        return (true);
+    }
+
     MazeCell CheckNeighbours(MazeCell cell, int height, int width)
     {
         List<MazeCell> list = new List<MazeCell>();
         int y = cell.y;
         int x = cell.x;
 
+        if (IsValidCell(y, x - 1))
+            list.Add(_maze[y, x - 1]);
+        if (IsValidCell(y - 1, x))
+            list.Add(_maze[y - 1, x]);
+        if (IsValidCell(y, x + 1))
+            list.Add(_maze[y, x + 1]);
+        if (IsValidCell(y + 1, x))
+            list.Add(_maze[y + 1, x]);
+
         if (_hexagonalShape == 0) // Flat
 		{
             if (x % 2 == 0)
 			{
-                if (y < height - 1 && _maze[y + 1, x] != null && _maze[y + 1, x].visited == 0)
-                    list.Add(_maze[y + 1, x]);
-                if (x < width - 1 && _maze[y, x + 1] != null && _maze[y, x + 1].visited == 0)
-                    list.Add(_maze[y, x + 1]);
-                if (y > 0 && x < width - 1 && _maze[y - 1, x + 1] != null && _maze[y - 1, x + 1].visited == 0)
+                if (IsValidCell(y - 1, x + 1))
                     list.Add(_maze[y - 1, x + 1]);
-                if (y > 0 && _maze[y - 1, x] != null && _maze[y - 1, x].visited == 0)
-                    list.Add(_maze[y - 1, x]);
-                if (y > 0 && x > 0 && _maze[y - 1, x - 1] != null && _maze[y - 1, x - 1].visited == 0)
+                if (IsValidCell(y - 1, x - 1))
                     list.Add(_maze[y - 1, x - 1]);
-                if (x > 0 && _maze[y, x - 1] != null && _maze[y, x - 1].visited == 0)
-                    list.Add(_maze[y, x - 1]);
             }
             else
 			{
-                if (y < height - 1 && x > 0 && _maze[y + 1, x - 1] != null && _maze[y + 1, x - 1].visited == 0)
+                if (IsValidCell(y + 1, x - 1))
                     list.Add(_maze[y + 1, x - 1]);
-                if (y < height - 1 && _maze[y + 1, x] != null && _maze[y + 1, x].visited == 0)
-                    list.Add(_maze[y + 1, x]);
-                if (y < height - 1 && x < width - 1 && _maze[y + 1, x + 1] != null && _maze[y + 1, x + 1].visited == 0)
+                if (IsValidCell(y + 1, x + 1))
                     list.Add(_maze[y + 1, x + 1]);
-                if (x > 0 && _maze[y, x - 1] != null && _maze[y, x - 1].visited == 0)
-                    list.Add(_maze[y, x - 1]);
-                if (x < width - 1 && _maze[y, x + 1] != null && _maze[y, x + 1].visited == 0)
-                    list.Add(_maze[y, x + 1]);
-                if (y > 0 && _maze[y - 1, x] != null && _maze[y - 1, x].visited == 0)
-                    list.Add(_maze[y - 1, x]);
             }
-
         }
         else // Pointy
 		{
             if (y % 2 == 0)
 			{
-                if (y < height - 1 && x > 0 && _maze[y + 1, x - 1] != null && _maze[y + 1, x - 1].visited == 0)
+                if (IsValidCell(y + 1, x - 1))
                     list.Add(_maze[y + 1, x - 1]);
-                if (y < height - 1 && _maze[y + 1, x] != null && _maze[y + 1, x].visited == 0)
-                    list.Add(_maze[y + 1, x]);
-                if (x < width - 1 && _maze[y, x + 1] != null && _maze[y, x + 1].visited == 0)
-                    list.Add(_maze[y, x + 1]);
-                if (y > 0 && _maze[y - 1, x] != null && _maze[y - 1, x].visited == 0)
-                    list.Add(_maze[y - 1, x]);
-                if (x > 0 && y > 0 && _maze[y - 1, x - 1] != null && _maze[y - 1, x - 1].visited == 0)
+                if (IsValidCell(y - 1, x - 1))
                     list.Add(_maze[y - 1, x - 1]);
-                if (x > 0 && _maze[y, x - 1] != null && _maze[y, x - 1].visited == 0)
-                    list.Add(_maze[y, x - 1]);
             }
             else
 			{
-                if (y < height - 1 && _maze[y + 1, x] != null &&  _maze[y + 1, x].visited == 0)
-                    list.Add(_maze[y + 1, x]);
-                if (y < height - 1 && x < width - 1 && _maze[y + 1, x + 1] != null && _maze[y + 1, x + 1].visited == 0)
+                if (IsValidCell(y + 1, x + 1))
                     list.Add(_maze[y + 1, x + 1]);
-                if (x < width - 1 && _maze[y, x + 1] != null && _maze[y, x + 1].visited == 0)
-                    list.Add(_maze[y, x + 1]);
-                if (y > 0 &&  x < width - 1 && _maze[y - 1, x + 1] != null && _maze[y - 1, x + 1].visited == 0)
+                if (IsValidCell(y - 1, x + 1))
                     list.Add(_maze[y - 1, x + 1]);
-                if (y > 0 && _maze[y - 1, x] != null && _maze[y - 1, x].visited == 0)
-                    list.Add(_maze[y - 1, x]);
-                if (x > 0 && _maze[y, x - 1] != null && _maze[y, x - 1].visited == 0)
-                    list.Add(_maze[y, x - 1]);
             }
         }
-
         if (list.Count == 0) // No neighbor found
             return null;
 
