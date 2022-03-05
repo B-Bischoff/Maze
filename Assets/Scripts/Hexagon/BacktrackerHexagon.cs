@@ -2,18 +2,29 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Backtracker : MonoBehaviour
+public class BacktrackerHexagon : MonoBehaviour
 {
 	public HexagonalGrid grid;
     public GameObject visualPlane;
     public float _delay = .01f;
 
-	private MazeCell[,] _maze;
+	private BacktrackerCell[,] _maze;
 	private int _height, _width;
     private bool _visualMode;
     private bool _isGenerating = false;
     private int _hexagonalShape; // 0 : flat | 1 : pointy 
     private GameObject _visualPlane;
+
+    public class BacktrackerCell : MazeCell
+	{
+        public bool visited; 
+
+		public BacktrackerCell(MazeCell cell): base (cell.x, cell.y)
+		{
+            this.walls = cell.walls;
+            this.visited = false;
+		}
+	}
 
 	private void Update()
 	{
@@ -24,19 +35,35 @@ public class Backtracker : MonoBehaviour
         }
 	}
 
+    BacktrackerCell[,] ConvertCellToBacktracker(MazeCell[,] maze)
+	{
+        BacktrackerCell[,] newMaze = new BacktrackerCell[_height, _width];
+
+        for (int y = 0; y < _height; y++)
+		{
+            for (int x = 0; x < _width; x++)
+			{
+                if (maze[y, x] != null)
+                    newMaze[y, x] = new BacktrackerCell(maze[y, x]);
+			}
+		}
+        return (newMaze);
+	}
+
 	void Init()
     {
-        _maze = grid.maze;
 		_height = grid.Height;
 		_width = grid.Width;
         _visualMode = grid.visualMode;
         _hexagonalShape = grid.GridMode % 2;
 
+        _maze = ConvertCellToBacktracker(grid.maze);
+
         CreateMaze();
 	}
     void CreateMaze()
     {
-        List<MazeCell> stack = new List<MazeCell>();
+        List<BacktrackerCell> stack = new List<BacktrackerCell>();
 
         // Setting up initial cell
         int y_start = 0;
@@ -54,29 +81,29 @@ public class Backtracker : MonoBehaviour
             _visualPlane = Instantiate(visualPlane, pos, Quaternion.Euler(0f, 90f * (_hexagonalShape + 1), 0f));
         }
 
-        _maze[y_start, x_start].visited = 1;
+        _maze[y_start, x_start].visited = true;
         stack.Add(_maze[y_start, x_start]);
 
         StartCoroutine(BreakWalls(stack, _height, _width));
     }
 
-    IEnumerator BreakWalls(List<MazeCell> stack, int height, int width)
+    IEnumerator BreakWalls(List<BacktrackerCell> stack, int height, int width)
     {
         while (stack.Count > 0)
         {
             // Getting last cell from stack
-            MazeCell currentCell = stack[stack.Count - 1];
+            BacktrackerCell currentCell = stack[stack.Count - 1];
             stack.Remove(currentCell);
 
-            MazeCell neighborCell = CheckNeighbours(currentCell, height, width);
+            BacktrackerCell neighborCell = CheckNeighbours(currentCell, height, width);
 
             if (neighborCell != null)
             {
                 // Updating stack and current cells
                 stack.Add(currentCell);
-                currentCell.visited = 1;
+                currentCell.visited = true;
                 stack.Add(neighborCell);
-                neighborCell.visited = 1;
+                neighborCell.visited = true;
 
                 // Remove walls
                 Vector2 dir = new Vector2(currentCell.x - neighborCell.x, currentCell.y - neighborCell.y);
@@ -152,6 +179,8 @@ public class Backtracker : MonoBehaviour
                 yield return new WaitForSeconds(_delay);
             }
         }
+        if (_visualMode)
+            Destroy(_visualPlane);
     }
 
     void DestroyWalls(GameObject wall1, GameObject wall2)
@@ -168,14 +197,14 @@ public class Backtracker : MonoBehaviour
             return (false);
         if (_maze[y, x] == null)
             return (false);
-        if (_maze[y, x].visited == 1)
+        if (_maze[y, x].visited == true)
             return (false);
         return (true);
     }
 
-    MazeCell CheckNeighbours(MazeCell cell, int height, int width)
+    BacktrackerCell CheckNeighbours(BacktrackerCell cell, int height, int width)
     {
-        List<MazeCell> list = new List<MazeCell>();
+        List<BacktrackerCell> list = new List<BacktrackerCell>();
         int y = cell.y;
         int x = cell.x;
 

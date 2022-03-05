@@ -287,7 +287,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1224414459}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7bb8873d99feed340b96f5cdaad48e81, type: 3}
   m_Name: 
@@ -298,8 +298,8 @@ MonoBehaviour:
   visualMode: 1
   Wall: {fileID: 406148476472698802, guid: c436d6fe56936484d989ede2e8c6202b, type: 3}
   Ground: {fileID: 7475280904032706727, guid: 5f6d5565a42ae0a4ea161e74ed9565e2, type: 3}
-  frontierVisu: {fileID: 4238776282952596734, guid: 83cb9e43bd977b64dadfebbbbe59a0a8, type: 3}
-  visitedVisu: {fileID: 4503030096242140233, guid: 4721894bdca5b474f92260f5aa4ff462, type: 3}
+  frontierVisu: {fileID: 4503030096242140233, guid: 4721894bdca5b474f92260f5aa4ff462, type: 3}
+  visitedVisu: {fileID: 4238776282952596734, guid: 83cb9e43bd977b64dadfebbbbe59a0a8, type: 3}
 --- !u!114 &1224414464
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -445,6 +445,7 @@ GameObject:
   - component: {fileID: 1749744711}
   - component: {fileID: 1749744710}
   - component: {fileID: 1749744712}
+  - component: {fileID: 1749744713}
   m_Layer: 0
   m_Name: HexagonalMazeGenerator
   m_TagString: Untagged
@@ -466,8 +467,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hexagon: {fileID: 5943944843410764312, guid: d9fceaba80aa75449ae2d01f8012e199, type: 3}
   hexa_plane: {fileID: 7323562528176549476, guid: 2cd7ea08bd5e6f1459fb5848b68b113b, type: 3}
-  GridMode: 1
-  Diameter: 7
+  GridMode: 2
+  Diameter: 25
   Height: 10
   Width: 10
   visualMode: 1
@@ -494,7 +495,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1749744709}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2c20bfb2266e7a74da5af31efd12e6cb, type: 3}
   m_Name: 
@@ -502,3 +503,20 @@ MonoBehaviour:
   grid: {fileID: 1749744710}
   visualPlane: {fileID: 7323562528176549476, guid: 0c90ee445c3679f44b856783c5d59bdf, type: 3}
   _delay: 0.05
+--- !u!114 &1749744713
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1749744709}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 753e72df29b98d64f93b52de05b78d58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  grid: {fileID: 1749744710}
+  visitedVisu: {fileID: 7323562528176549476, guid: 0c90ee445c3679f44b856783c5d59bdf, type: 3}
+  frontierVisu: {fileID: 7323562528176549476, guid: 549c436c4ed7a9e4787b3619323c10b7, type: 3}
+  _delay: 0.01
+  _visualMode: 0

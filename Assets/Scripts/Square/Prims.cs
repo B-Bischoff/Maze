@@ -83,7 +83,7 @@ public class Prims : MonoBehaviour
         _maze[cell_y, cell_x].visited = true;
         if (visualMode)
         {
-            Vector3 pos = new Vector3(cell_x + .5f, 1, cell_y + .5f);
+            Vector3 pos = new Vector3(cell_x + .5f, .1f, cell_y + .5f);
             Instantiate(visitedVisu, pos, Quaternion.identity);
         }
 
