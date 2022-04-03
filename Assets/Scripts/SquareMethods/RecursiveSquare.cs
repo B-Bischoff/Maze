@@ -2,21 +2,30 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RecursiveMaze : MonoBehaviour
+public class RecursiveSquare : MonoBehaviour
 {
-    [Header("Algorithm parameters")]
-    public int chamberNbr;
-    public int width, height;
-    public float delay = 0.025f;
+    [Header("Grid generator reference")]
+    public RectangularGrid Grid;
 
-    public bool randomChamber;
+    [Header("Algorithm parameters")]
+    private int maxDepth;
+    private int width, height;
+    private float delay = 0.025f;
+
+    private bool randomChamber;
 
     [Header("Prefab")]
     public GameObject Ground;
     public GameObject vertWall, horWall;
+    private bool _isGenerating;
 
     void Start()
     {
+        width = Grid.Width;
+        height = Grid.Height;
+        randomChamber = Grid.RandomChamber;
+        maxDepth = Grid.MaxDepth;
+
         if (height <= 0 || width <= 0)
         {
             Debug.Log("Invalid maze length");
@@ -30,7 +39,7 @@ public class RecursiveMaze : MonoBehaviour
         Vector2 topRight = new Vector2(width, height);
 
         CreateBorders(bottomLeft, topRight);
-        StartCoroutine(CreateMaze(bottomLeft, topRight, chamberNbr));
+        StartCoroutine(CreateMaze(bottomLeft, topRight, maxDepth));
     }
 
     void CreateGround()
@@ -60,9 +69,9 @@ public class RecursiveMaze : MonoBehaviour
         }
     }
 
-    IEnumerator CreateMaze(Vector2 bottomLeft, Vector2 topRight, int chamber)
+    IEnumerator CreateMaze(Vector2 bottomLeft, Vector2 topRight, int depth)
 	{
-        if (chamber == 0)
+        if (depth == 0)
             yield break;
 
         if (topRight.x - bottomLeft.x < 3 || topRight.y - bottomLeft.y < 3)
@@ -123,29 +132,29 @@ public class RecursiveMaze : MonoBehaviour
             yield return new WaitForSeconds(delay);
         }
 
-        chamber--;
+        depth--;
 
         // Create new corners for each chamber
 
         //  Top left chamber
         Vector2 chamber1BottomLeft = new Vector2(bottomLeft.x, y);
         Vector2 chamber1TopRight = new Vector2(x, topRight.y);
-        StartCoroutine(CreateMaze(chamber1BottomLeft, chamber1TopRight, chamber));
+        StartCoroutine(CreateMaze(chamber1BottomLeft, chamber1TopRight, depth));
 
         // Bottom left chamber
         Vector2 chamber2BottomLeft = new Vector2(bottomLeft.x, bottomLeft.y);
         Vector2 chamber2TopRight = new Vector2(x, y);
-        StartCoroutine(CreateMaze(chamber2BottomLeft, chamber2TopRight, chamber));
+        StartCoroutine(CreateMaze(chamber2BottomLeft, chamber2TopRight, depth));
 
         // Top right chamber
         Vector2 chamber3BottomLeft = new Vector2(x, y);
         Vector2 chamber3TopRight = new Vector2(topRight.x, topRight.y);
-        StartCoroutine(CreateMaze(chamber3BottomLeft, chamber3TopRight, chamber));
+        StartCoroutine(CreateMaze(chamber3BottomLeft, chamber3TopRight, depth));
 
         // Bottom left chamber
         Vector2 chamber4BottomLeft = new Vector2(x, bottomLeft.y);
         Vector2 chamber4TopRight = new Vector2(topRight.x, y);
-        StartCoroutine(CreateMaze(chamber4BottomLeft, chamber4TopRight, chamber));
+        StartCoroutine(CreateMaze(chamber4BottomLeft, chamber4TopRight, depth));
 
         yield break;
     }        

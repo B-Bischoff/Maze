@@ -2,10 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BetterRecursive : MonoBehaviour
+public class BetterRecursiveSquare : MonoBehaviour
 {
+    [Header("Grid generator reference")]
+    public RectangularGrid Grid;
+
     [Header("Algorithm parameters")]
-    public float delay = 0.025f;
     public int width, height;
     public int maxDepth;
     public bool visualMode;
@@ -15,46 +17,47 @@ public class BetterRecursive : MonoBehaviour
     public GameObject vertWall, horWall;
     public GameObject planeA, planeB;
 
-	private MazeCell[,] _maze;
+	private BetterRecurCell[,] _maze;
 
-    public class MazeCell
-    {
+    public class BetterRecurCell : MazeCell
+	{
         public int region;
         public int subRegion;
-        public int x, y;
 
-        public GameObject topWall, bottomWall, leftWall, rightWall;
-
-        public MazeCell(int x, int y, int region)
-        {
-            this.x = x;
-            this.y = y;
+        public BetterRecurCell(int x, int y, int region) : base(x, y)
+		{
             this.region = region;
-            subRegion = 0;
-        }
-    }
+            this.subRegion = 0;
+            this.walls = new GameObject[4];
+		}
+	}
 
     void Start()
     {
+        height = Grid.Height;
+        width = Grid.Width;
+        maxDepth = Grid.MaxDepth;
+        visualMode = Grid.VisualMode;
+
         if (height <= 0 || width <= 0)
         {
             Debug.Log("Invalid maze length");
             return;
         }
 
-        _maze = new MazeCell[height, width];
+        _maze = new BetterRecurCell[height, width];
 
         CreateGround();
         CreateBorders();
 
         // Init tab + list
         
-        List<MazeCell> initialRegion = new List<MazeCell>();
+        List<BetterRecurCell> initialRegion = new List<BetterRecurCell>();
         for (int y = 0; y < height; y++)
 		{
             for (int x = 0; x < width; x++)
 			{
-                _maze[y, x] = new MazeCell(x, y, 0);
+                _maze[y, x] = new BetterRecurCell(x, y, 0);
                 initialRegion.Add(_maze[y, x]);
 			}
 		}
@@ -62,8 +65,28 @@ public class BetterRecursive : MonoBehaviour
         StartCoroutine(CreateMaze(initialRegion, 0));
     }
 
-    IEnumerator CreateMaze(List<MazeCell> regionList, int depth)
+    bool IsInRegionBorders(BetterRecurCell cell, List<BetterRecurCell> regionList)
 	{
+        int x = cell.x;
+        int y = cell.y;
+
+        if (x == 0 || y == 0 || x == width - 1 || y == height - 1)
+            return true;
+
+        if (!regionList.Contains(_maze[y + 1, x]))
+            return true;
+        else if (!regionList.Contains(_maze[y, x + 1]))
+            return true;
+        else if (!regionList.Contains(_maze[y - 1, x]))
+            return true;
+        else if (!regionList.Contains(_maze[y, x - 1]))
+            return true;
+
+        return false;
+	}
+
+    IEnumerator CreateMaze(List<BetterRecurCell> regionList, int depth)
+    {
         if (depth > maxDepth)
             yield break;
 
@@ -71,16 +94,16 @@ public class BetterRecursive : MonoBehaviour
         for (int i = 0; i < regionList.Count; i++)
             regionList[i].region = 1;
 
-        List<MazeCell> expandList = new List<MazeCell>();
+        List<BetterRecurCell> expandList = new List<BetterRecurCell>();
 
         // Choose two random cells
-        int seed1Nbr = Random.Range(0, regionList.Count);
-        int seed2Nbr = Random.Range(0, regionList.Count);
-        while (seed1Nbr == seed2Nbr)
-            seed2Nbr = Random.Range(0, regionList.Count);
+        BetterRecurCell seed1 = regionList[Random.Range(0, regionList.Count)];
+        while (IsInRegionBorders(seed1, regionList) == false)
+            seed1 = regionList[Random.Range(0, regionList.Count)];
 
-        MazeCell seed1 = regionList[seed1Nbr];
-        MazeCell seed2 = regionList[seed2Nbr];
+        BetterRecurCell seed2 = regionList[Random.Range(0, regionList.Count)];
+        while (IsInRegionBorders(seed2, regionList) == false || seed2 == seed1)
+            seed2 = regionList[Random.Range(0, regionList.Count)];
 
         // Adding seeds to expand list
         AddCellToSubregion(seed1,expandList, 1);
@@ -89,15 +112,15 @@ public class BetterRecursive : MonoBehaviour
         // Expand seeds
         while (!IsEntireRegionSplitted(regionList))
 		{
-            MazeCell randomCell = expandList[Random.Range(0, expandList.Count)];
+            BetterRecurCell randomCell = expandList[Random.Range(0, expandList.Count)];
             expandList.Remove(randomCell);
             AddNeighbors(randomCell, expandList);
-            yield return new WaitForSeconds(delay);
+            yield return new WaitForSeconds(Grid.Delay);
         }
 
         // Split subregion in lists
-        List<MazeCell> subRegionAList = new List<MazeCell>();
-        List<MazeCell> subRegionBList = new List<MazeCell>();
+        List<BetterRecurCell> subRegionAList = new List<BetterRecurCell>();
+        List<BetterRecurCell> subRegionBList = new List<BetterRecurCell>();
 
         for (int i = 0; i < regionList.Count; i++)
         {
@@ -138,29 +161,29 @@ public class BetterRecursive : MonoBehaviour
             yield return StartCoroutine(CreateMaze(subRegionBList, depth));
     }
     
-    IEnumerator CheckRegionBorder(MazeCell cell, List<GameObject> wallList)
+    IEnumerator CheckRegionBorder(BetterRecurCell cell, List<GameObject> wallList)
 	{
         int y = cell.y;
         int x = cell.x;
         if (y > 0 && _maze[y - 1, x].subRegion == 1 && _maze[y - 1, x].region == 1) // Top
 		{
             Vector3 pos = new Vector3(x + .5f, .5f, y);
-            yield return StartCoroutine(ConstructWall(cell.topWall, pos, horWall, wallList));
+            yield return StartCoroutine(ConstructWall(cell.walls[0], pos, horWall, wallList));
         }
         if (y < height - 1 && _maze[y + 1, x].subRegion == 1 && _maze[y + 1, x].region == 1) // Bottom
 		{
             Vector3 pos = new Vector3(x + .5f, .5f, y + 1f);
-            yield return StartCoroutine(ConstructWall(cell.bottomWall, pos, horWall, wallList));
+            yield return StartCoroutine(ConstructWall(cell.walls[2], pos, horWall, wallList));
         }
         if (x > 0 && _maze[y, x - 1].subRegion == 1 && _maze[y, x - 1].region == 1) // Left
         {
             Vector3 pos = new Vector3(x, .5f, y +.5f);
-            yield return StartCoroutine(ConstructWall(cell.leftWall, pos, vertWall, wallList));
+            yield return StartCoroutine(ConstructWall(cell.walls[1], pos, vertWall, wallList));
         }
         if (x < width - 1 && _maze[y, x + 1].subRegion == 1 && _maze[y, x + 1].region == 1) // Right
         {
             Vector3 pos = new Vector3(x + 1f, .5f, y+.5f);
-            yield return StartCoroutine(ConstructWall(cell.rightWall, pos, vertWall, wallList));
+            yield return StartCoroutine(ConstructWall(cell.walls[3], pos, vertWall, wallList));
         }
     }
 
@@ -169,10 +192,10 @@ public class BetterRecursive : MonoBehaviour
         cellWall = Instantiate(wall, pos, Quaternion.identity);
         cellWall.transform.parent = gameObject.transform;
         wallList.Add(cellWall);
-        yield return new WaitForSeconds(delay);
+        yield return new WaitForSeconds(Grid.Delay);
 	}
 
-    void AddNeighbors(MazeCell cell, List<MazeCell> list)
+    void AddNeighbors(BetterRecurCell cell, List<BetterRecurCell> list)
 	{
         int y = cell.y;
         int x = cell.x;
@@ -187,13 +210,13 @@ public class BetterRecursive : MonoBehaviour
             AddCellToSubregion(_maze[y, x + 1], list, cell.subRegion);
     }
 
-    void AddCellToSubregion(MazeCell cell, List<MazeCell> list, int newSubregion)
+    void AddCellToSubregion(BetterRecurCell cell, List<BetterRecurCell> list, int newSubregion)
 	{
         cell.subRegion = newSubregion;
         list.Add(cell);
-        Vector3 pos = new Vector3(cell.x + .5f, .1f, cell.y + .5f);
         if (visualMode)
         {
+            Vector3 pos = new Vector3(cell.x + .5f, .01f, cell.y + .5f);
             if (newSubregion == 2)
                 Instantiate(planeA, pos, Quaternion.identity).transform.parent = gameObject.transform;
             else
@@ -201,7 +224,7 @@ public class BetterRecursive : MonoBehaviour
         }
     }
 
-    bool IsEntireRegionSplitted(List<MazeCell> region)
+    bool IsEntireRegionSplitted(List<BetterRecurCell> region)
     {
         for (int i = 0; i < region.Count; i++)
         {

@@ -15,6 +15,7 @@ public class BacktrackerHexagon : MonoBehaviour
     private int _hexagonalShape; // 0 : flat | 1 : pointy 
     private GameObject _visualPlane;
 
+
     public class BacktrackerCell : MazeCell
 	{
         public bool visited; 
@@ -55,7 +56,7 @@ public class BacktrackerHexagon : MonoBehaviour
 		_height = grid.Height;
 		_width = grid.Width;
         _visualMode = grid.visualMode;
-        _hexagonalShape = grid.GridMode % 2;
+        _hexagonalShape = ((int)grid.GridMode) % 2;
 
         _maze = ConvertCellToBacktracker(grid.maze);
 

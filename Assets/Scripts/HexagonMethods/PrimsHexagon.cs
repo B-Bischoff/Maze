@@ -56,7 +56,7 @@ public class PrimsHexagon : MonoBehaviour
         _height = grid.Height;
         _width = grid.Width;
         _visualMode = grid.visualMode;
-        _hexagonalShape = grid.GridMode % 2;
+        _hexagonalShape = ((int)grid.GridMode) % 2;
 
         _maze = ConvertCellToPrims(grid.maze);
 

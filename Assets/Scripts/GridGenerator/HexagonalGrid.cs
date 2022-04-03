@@ -1,14 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Maze_enums;
 
 public class HexagonalGrid : MonoBehaviour
 {
     public GameObject hexagon;
 	public GameObject hexa_plane;
 
-	[Header("0 : Square flat | 1 : Square pointy | 2 : Hexagon flat | 3 : Hexagon pointy")]	
-	public int GridMode;
+
+	[HideInInspector]
+	public HexagonTypeEnum GridMode;
+
+	[HideInInspector]
+	public HexagonalGenerationEnum HexagonalGeneration;
 
 	public int Diameter;
 	public int Height, Width;
@@ -26,20 +31,36 @@ public class HexagonalGrid : MonoBehaviour
 	{
 		switch (GridMode)
 		{
-			case 0:
+			case HexagonTypeEnum.square_flat:
 				CreateSquareFlat();
 				break;
-			case 1:
+			case HexagonTypeEnum.square_pointy:
 				CreateSquarePointy();
 				break;
-			case 2:
+			case HexagonTypeEnum.hexagon_flat:
 				CreateHexFlat(Diameter);
 				break;
-			case 3:
+			case HexagonTypeEnum.hexagon_pointy:
 				CreateHexPointy(Diameter);
 				break;
 			default:
 				Debug.Log("Wrong grid mode");
+				break;
+		}
+
+		switch (HexagonalGeneration)
+		{
+			case HexagonalGenerationEnum.backtracker:
+				GetComponent<BacktrackerHexagon>().enabled = true;
+				break;
+			case HexagonalGenerationEnum.prims:
+				GetComponent<PrimsHexagon>().enabled = true;
+				break;
+			case HexagonalGenerationEnum.kruskal:
+				GetComponent<KruskalHexagon>().enabled = true;
+				break;
+			case HexagonalGenerationEnum.better_recursive:
+				GetComponent<BetterRecursiveHexagon>().enabled = true;
 				break;
 		}
 	}
@@ -57,7 +78,7 @@ public class HexagonalGrid : MonoBehaviour
 			{
 				float xPos = x * hexWidth;
 				float zPos = x % 2 * hexHeight / 2 + (y * hexHeight);
-				Vector3 pos = new Vector3(xPos, 0, zPos);
+				Vector3 pos = new Vector3(xPos, .22f, zPos);
 
 				GameObject walls = Instantiate(hexagon, pos, Quaternion.identity);
 				walls.transform.parent = transform;

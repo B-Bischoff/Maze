@@ -2,20 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Prims : MonoBehaviour
+public class PrimsSquare : MonoBehaviour
 {
-    /*
-     * Choose a random cell in the maze
-     * Add every neighbours cells in the frontier list
-     * Choose a random cell from the frontier list
-     * Connect it with a random neighbor visited cell
-     *
-    */
+    [Header("Grid generator reference")]
+    public RectangularGrid Grid;
+
     [Header("Algorithm parameters")]
-    public int width;
-    public int height;
-    public float delay = 0.025f;
-    public bool visualMode;
+    private int width;
+    private int height;
+    private float delay = 0.025f;
+    private bool visualMode;
 
     [Header("Prefabs")]
     public GameObject Wall;
@@ -23,59 +19,61 @@ public class Prims : MonoBehaviour
     public GameObject frontierVisu;
     public GameObject visitedVisu;
 
-    private MazeCell[,] _maze;
+    private PrimsCell[,] _maze;
 
-    public class MazeCell
+    private bool _isGenerating;
+    
+    public class PrimsCell : MazeCell
+	{
+        public bool visited;
+        public bool inFrontier;
+
+        public PrimsCell(MazeCell cell) : base(cell.x, cell.y)
+		{
+            this.walls = cell.walls;
+            this.visited = false;
+            this.inFrontier = false;
+		}
+	}
+
+    PrimsCell[,] ConvertCellToPrims(MazeCell[,] maze)
     {
-        public bool visited, inFrontier;
-        public GameObject TopWall, LeftWall, BottomWall, RightWall;
-        public int x, y;
+        PrimsCell[,] newMaze = new PrimsCell[height, width];
 
-        public MazeCell(int x, int y)
+        for (int y = 0; y < height; y++)
         {
-            visited = false;
-            inFrontier = false;
-            this.x = x;
-            this.y = y;
+            for (int x = 0; x < width; x++)
+            {
+                if (maze[y, x] != null)
+                    newMaze[y, x] = new PrimsCell(maze[y, x]);
+            }
+        }
+        return (newMaze);
+    }
+
+    private void Update()
+    {
+        if (_isGenerating == false && Grid.maze != null) // Wait for RectangularGrid to generate grid
+        {
+            _isGenerating = true;
+            Init();
         }
     }
 
-    void Start()
+    private void Init()
     {
-        if (height <= 0 || width <= 0)
-        {
-            Debug.Log("Invalid maze length");
-            return;
-        }
-        _maze = new MazeCell[height, width];
-        CreateGound();
+        height = Grid.Height;
+        width = Grid.Width;
+        visualMode = Grid.VisualMode;
+        _maze = ConvertCellToPrims(Grid.maze);
         StartCoroutine(CreateMaze());
     }
 
+
     IEnumerator CreateMaze()
 	{
-        // Array initialization
-        for (int y = 0; y < height; y++)
-            for (int x = 0; x < width; x++)
-                _maze[y, x] = new MazeCell(x, y);
-
-        // Creating every walls
-        for (int i = 0; i < height; i += 1)
-        {
-            for (int j = 0; j < width; j += 1)
-            {
-                Vector3 pos = new Vector3(j + Wall.transform.localScale.x / 2, (float)Wall.transform.localScale.y / 2, i + Wall.transform.localScale.z / 2);
-                GameObject wall = Instantiate(Wall, pos, Quaternion.identity);
-                wall.transform.parent = gameObject.transform;
-                _maze[i, j].TopWall = wall.transform.Find("TopWall").gameObject;
-                _maze[i, j].LeftWall = wall.transform.Find("LeftWall").gameObject;
-                _maze[i, j].BottomWall = wall.transform.Find("BottomWall").gameObject;
-                _maze[i, j].RightWall = wall.transform.Find("RightWall").gameObject;
-            }
-        }
-
         // List initialization
-        List<MazeCell> frontierList = new List<MazeCell>();
+        List<PrimsCell> frontierList = new List<PrimsCell>();
 
         // Choosing a random starting cell in the maze
         int cell_x = Random.Range(0, width);
@@ -83,7 +81,7 @@ public class Prims : MonoBehaviour
         _maze[cell_y, cell_x].visited = true;
         if (visualMode)
         {
-            Vector3 pos = new Vector3(cell_x + .5f, .1f, cell_y + .5f);
+            Vector3 pos = new Vector3(cell_x + .5f, .11f, cell_y + .5f);
             Instantiate(visitedVisu, pos, Quaternion.identity);
         }
 
@@ -92,7 +90,7 @@ public class Prims : MonoBehaviour
         while (frontierList.Count > 0)
         {
             // Pick random cell from the list 
-            MazeCell frontierCell = frontierList[Random.Range(0, frontierList.Count)];
+            PrimsCell frontierCell = frontierList[Random.Range(0, frontierList.Count)];
             // Update cell properties
             frontierCell.visited = true;
             frontierCell.inFrontier = false;
@@ -109,17 +107,17 @@ public class Prims : MonoBehaviour
         {
             for (int j = 0; j < width; j++)
             {
-                if (j < width - 1 && _maze[i, j].RightWall != null && _maze[i, j + 1].LeftWall != null)
-                    Destroy(_maze[i, j].RightWall);
-                if (i < height - 1 && _maze[i, j].TopWall != null && _maze[i + 1, j].BottomWall != null)
-                    Destroy(_maze[i, j].TopWall);
+                if (j < width - 1 && _maze[i, j].walls[3] != null && _maze[i, j + 1].walls[1] != null)
+                    Destroy(_maze[i, j].walls[3]);
+                if (i < height - 1 && _maze[i, j].walls[0] != null && _maze[i + 1, j].walls[2] != null)
+                    Destroy(_maze[i, j].walls[0]);
             }
         }
     }
 
-    void ConnectToNeighbor(MazeCell cell)
+    void ConnectToNeighbor(PrimsCell cell)
 	{
-        List<MazeCell> neighbors = new List<MazeCell>();
+        List<PrimsCell> neighbors = new List<PrimsCell>();
         int x = cell.x;
         int y = cell.y;
 
@@ -135,25 +133,25 @@ public class Prims : MonoBehaviour
 
         if (visualMode)
         {
-            Vector3 pos = new Vector3(x + .5f, .1f, y + .5f);
+            Vector3 pos = new Vector3(x + .5f, .11f, y + .5f);
             Instantiate(visitedVisu, pos, Quaternion.identity);
         }
 
         RemoveWalls(cell, neighbors[Random.Range(0, neighbors.Count)]);
     }
 
-    void RemoveWalls(MazeCell cell1, MazeCell cell2)
+    void RemoveWalls(PrimsCell cell1, PrimsCell cell2)
 	{
         Vector2 dir = new Vector2(cell1.x - cell2.x, cell1.y - cell2.y);
 
         if (dir.y == -1)
-            DestroyWalls(cell1.TopWall, cell2.BottomWall);
+            DestroyWalls(cell1.walls[0], cell2.walls[2]);
         else if (dir.y == 1)
-            DestroyWalls(cell1.BottomWall, cell2.TopWall);
+            DestroyWalls(cell1.walls[2], cell2.walls[0]);
         else if (dir.x == -1)
-            DestroyWalls(cell1.RightWall, cell2.LeftWall);
+            DestroyWalls(cell1.walls[3], cell2.walls[1]);
         else
-            DestroyWalls(cell1.LeftWall, cell2.RightWall);
+            DestroyWalls(cell1.walls[1], cell2.walls[3]);
     }
 
     void DestroyWalls(GameObject wall1, GameObject wall2)
@@ -162,7 +160,7 @@ public class Prims : MonoBehaviour
         Destroy(wall2);
 	}
 
-    void AddNeighboursToFrontier(MazeCell cell, List<MazeCell> list)
+    void AddNeighboursToFrontier(PrimsCell cell, List<PrimsCell> list)
 	{
         int y = cell.y;
         int x = cell.x;
@@ -177,7 +175,7 @@ public class Prims : MonoBehaviour
             SetNeighbor(_maze[y, x + 1], list);
     }
 
-    void SetNeighbor(MazeCell cell, List<MazeCell> list)
+    void SetNeighbor(PrimsCell cell, List<PrimsCell> list)
 	{
         cell.inFrontier = true;
         list.Add(cell);
@@ -187,13 +185,5 @@ public class Prims : MonoBehaviour
             Vector3 pos = new Vector3(cell.x + .5f, .1f, cell.y + .5f);
             Instantiate(frontierVisu, pos, Quaternion.identity);
         }
-    }
-
-    void CreateGound()
-    {
-        Vector3 groundPos = new Vector3(width / 2f, 0, height / 2f);
-        Vector3 groundScale = new Vector3(width / 10f, 1, height / 10f);
-        Ground.transform.localScale = groundScale;
-        Instantiate(Ground, groundPos, Quaternion.identity).transform.parent = gameObject.transform;
     }
 }

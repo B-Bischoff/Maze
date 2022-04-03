@@ -2,34 +2,43 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Kruskal : MonoBehaviour
+public class KruskalSquare : MonoBehaviour
 {
+    [Header("Grid generator reference")]
+    public RectangularGrid Grid;
+
     [Header("Algorithm parameters")]
     public float delay = 0.01f;
-    public int width, height;
-    public bool visualMode;
+    private int width, height;
+    private bool visualMode;
 
     [Header("Prefabs")]
     public GameObject Wall;
     public GameObject Ground;
     public GameObject visualPlane;
 
-    private MazeCell[,] _maze;
+    private bool _isGenerating;
 
-    public class MazeCell
+    private KruskalCell[,] _maze;
+
+    public class KruskalCell : MazeCell
     {
-        public GameObject TopWall, LeftWall, BottomWall, RightWall;
-        public int x, y;
         public int set;
         public GameObject plane;
         public Color color;
 
-        public MazeCell(int x, int y, int set, GameObject visualPlane, GameObject parent)
+        public KruskalCell(MazeCell cell, int set) : base(cell.x, cell.y)
+		{
+            this.walls = cell.walls;
+            this.set = set;
+		}
+        public KruskalCell(MazeCell cell, int set, GameObject visualPlane, GameObject parent) : base(cell.x, cell.y)
         {
-            this.x = x;
-            this.y = y;
+            this.walls = cell.walls;
             this.set = set;
             Vector3 pos = new Vector3(x + .5f, .1f, y + .5f);
+
+            // Generating plane and a random plane color 
             this.plane = Instantiate(visualPlane, pos, Quaternion.identity);
             this.plane.transform.parent = parent.transform;
             this.color = new Color(
@@ -38,61 +47,51 @@ public class Kruskal : MonoBehaviour
                 Random.Range(0, 256) / 255f);
             this.plane.GetComponent<Renderer>().material.color = this.color;
         }
-        public MazeCell(int x, int y, int set)
-		{
-            this.x = x;
-            this.y = y;
-            this.set = set;
-        }
     }
 
-    void Start()
+    KruskalCell[,] ConvertCellToKruskal(MazeCell[,] maze)
     {
-        if (height <= 0 || width <= 0)
-        {
-            Debug.Log("Invalid maze length");
-            return;
-        }
-        CreateGround();
-        _maze = new MazeCell[height, width];
-        StartCoroutine(CreateMaze());
-    }
-    IEnumerator CreateMaze()
-    {
-        // Array initialization
+        KruskalCell[,] newMaze = new KruskalCell[height, width];
+
         for (int y = 0; y < height; y++)
         {
             for (int x = 0; x < width; x++)
             {
                 if (visualMode)
-                    _maze[y, x] = new MazeCell(x, y, height * y + x, visualPlane, gameObject);
+                    newMaze[y, x] = new KruskalCell(maze[y, x], width * y + x, visualPlane, gameObject);
                 else
-                    _maze[y, x] = new MazeCell(x, y, height * y + x);
+                    newMaze[y, x] = new KruskalCell(maze[y, x], width * y + x);
             }
         }
-
-        // Creating every walls
-        for (int i = 0; i < height; i++)
+        return (newMaze);
+    }
+    private void Update()
+    {
+        if (_isGenerating == false && Grid.maze != null) // Wait for RectangularGrid to generate grid
         {
-            for (int j = 0; j < width; j++)
-            {
-                Vector3 pos = new Vector3(j + Wall.transform.localScale.x / 2, (float)Wall.transform.localScale.y / 2, i + Wall.transform.localScale.z / 2);
-                GameObject wall = Instantiate(Wall, pos, Quaternion.identity);
-                wall.transform.parent = gameObject.transform;
-                _maze[i, j].TopWall = wall.transform.Find("TopWall").gameObject;
-                _maze[i, j].LeftWall = wall.transform.Find("LeftWall").gameObject;
-                _maze[i, j].BottomWall = wall.transform.Find("BottomWall").gameObject;
-                _maze[i, j].RightWall = wall.transform.Find("RightWall").gameObject;
-            }
+            _isGenerating = true;
+            Init();
         }
+    }
 
+    private void Init()
+    {
+        height = Grid.Height;
+        width = Grid.Width;
+        visualMode = Grid.VisualMode;
+        _maze = ConvertCellToKruskal(Grid.maze);
+        StartCoroutine(CreateMaze());
+    }
+
+    IEnumerator CreateMaze()
+    {
         while (!IsOnlyOneSet())
 		{
             int y = Random.Range(0, height);
             int x = Random.Range(0, width);
-            MazeCell cell = _maze[y, x];
-            
-            MazeCell neighborCell = GetNeighborCell(cell);
+            KruskalCell cell = _maze[y, x];
+
+            KruskalCell neighborCell = GetNeighborCell(cell);
             if (neighborCell != null)
 			{
                 AssignNewSet(cell, neighborCell);
@@ -106,15 +105,15 @@ public class Kruskal : MonoBehaviour
         {
             for (int j = 0; j < width; j++)
             {
-                if (j < width - 1 && _maze[i, j].RightWall != null && _maze[i, j + 1].LeftWall != null)
-                    Destroy(_maze[i, j].RightWall);
-                if (i < height - 1 && _maze[i, j].TopWall != null && _maze[i + 1, j].BottomWall != null)
-                    Destroy(_maze[i, j].TopWall);
+                if (j < width - 1 && _maze[i, j].walls[3] != null && _maze[i, j + 1].walls[1] != null)
+                    Destroy(_maze[i, j].walls[3]);
+                if (i < height - 1 && _maze[i, j].walls[0] != null && _maze[i + 1, j].walls[2] != null)
+                    Destroy(_maze[i, j].walls[0]);
             }
         }
     }
 
-    void AssignNewSet(MazeCell cell1, MazeCell cell2)
+    void AssignNewSet(KruskalCell cell1, KruskalCell cell2)
 	{
         int newSet;
         int oldSet;
@@ -132,6 +131,7 @@ public class Kruskal : MonoBehaviour
             oldSet = cell1.set;
             newColor = cell2.color;
         }
+
         for (int y = 0; y < height; y++)
         {
             for (int x = 0; x < width; x++)
@@ -149,18 +149,18 @@ public class Kruskal : MonoBehaviour
         }
     }
 
-    void RemoveWalls(MazeCell cell1, MazeCell cell2)
+    void RemoveWalls(KruskalCell cell1, KruskalCell cell2)
     {
         Vector2 dir = new Vector2(cell1.x - cell2.x, cell1.y - cell2.y);
 
         if (dir.y == -1)
-            DestroyWalls(cell1.TopWall, cell2.BottomWall);
+            DestroyWalls(cell1.walls[0], cell2.walls[2]);
         else if (dir.y == 1)
-            DestroyWalls(cell1.BottomWall, cell2.TopWall);
+            DestroyWalls(cell1.walls[2], cell2.walls[0]);
         else if (dir.x == -1)
-            DestroyWalls(cell1.RightWall, cell2.LeftWall);
+            DestroyWalls(cell1.walls[3], cell2.walls[1]);
         else
-            DestroyWalls(cell1.LeftWall, cell2.RightWall);
+            DestroyWalls(cell1.walls[1], cell2.walls[3]);
     }
 
     void DestroyWalls(GameObject wall1, GameObject wall2)
@@ -169,20 +169,20 @@ public class Kruskal : MonoBehaviour
         Destroy(wall2);
     }
 
-    MazeCell GetNeighborCell(MazeCell cell)
+    KruskalCell GetNeighborCell(KruskalCell cell)
 	{
-        List<MazeCell> list = new List<MazeCell>();
+        List<KruskalCell> list = new List<KruskalCell>();
 
         int y = cell.y;
         int x = cell.x;
 
-        if (y > 0 && cell.set != _maze[y - 1, x].set) // Top
+        if (y > 0 && cell.set != _maze[y - 1, x].set) // Bottom
             list.Add(_maze[y - 1, x]);
-        if (y < height - 1 && cell.set != _maze[y + 1, x].set) // Bottom
+        if (y < height - 1 && cell.set != _maze[y + 1, x].set) // Top
             list.Add(_maze[y + 1, x]);
         if (x > 0 && cell.set != _maze[y, x - 1].set) // Left
             list.Add(_maze[y, x - 1]);
-        if (x < width - 1 && cell.set != _maze[y, x + 1].set) // Top
+        if (x < width - 1 && cell.set != _maze[y, x + 1].set) // Right
             list.Add(_maze[y, x + 1]);
 
         if (list.Count == 0)
@@ -197,13 +197,5 @@ public class Kruskal : MonoBehaviour
                 if (_maze[y, x].set != _maze[0, 0].set)
                     return (false);
         return (true);
-    }
-
-    void CreateGround()
-	{
-        Vector3 groundPos = new Vector3(width / 2f, 0, height / 2f);
-        Vector3 groundScale = new Vector3(width / 10f, 1, height / 10f);
-        Ground.transform.localScale = groundScale;
-        Instantiate(Ground, groundPos, Quaternion.identity).transform.parent = gameObject.transform;
     }
 }
