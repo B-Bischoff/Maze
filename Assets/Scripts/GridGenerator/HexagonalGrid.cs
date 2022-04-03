@@ -15,8 +15,12 @@ public class HexagonalGrid : MonoBehaviour
 	[HideInInspector]
 	public HexagonalGenerationEnum HexagonalGeneration;
 
-	public int Diameter;
+	public int Radius;
 	public int Height, Width;
+
+	public int MaxDepth;
+
+	public float Delay;
 
 	public bool visualMode;
 
@@ -38,10 +42,10 @@ public class HexagonalGrid : MonoBehaviour
 				CreateSquarePointy();
 				break;
 			case HexagonTypeEnum.hexagon_flat:
-				CreateHexFlat(Diameter);
+				CreateHexFlat(Radius);
 				break;
 			case HexagonTypeEnum.hexagon_pointy:
-				CreateHexPointy(Diameter);
+				CreateHexPointy(Radius);
 				break;
 			default:
 				Debug.Log("Wrong grid mode");
@@ -67,7 +71,7 @@ public class HexagonalGrid : MonoBehaviour
 
 	public void CreateSquareFlat()
 	{
-		Diameter = 0;
+		Radius = 0;
 
 		// Maze initialization
 		maze = new MazeCell[Height, Width];
@@ -78,12 +82,12 @@ public class HexagonalGrid : MonoBehaviour
 			{
 				float xPos = x * hexWidth;
 				float zPos = x % 2 * hexHeight / 2 + (y * hexHeight);
-				Vector3 pos = new Vector3(xPos, .22f, zPos);
+				Vector3 pos = new Vector3(xPos, 0f, zPos);
 
 				GameObject walls = Instantiate(hexagon, pos, Quaternion.identity);
 				walls.transform.parent = transform;
 
-				Instantiate(hexa_plane, pos, hexa_plane.transform.rotation).transform.parent = transform;
+				Instantiate(hexa_plane, pos + new Vector3(0, .3f, 0), hexa_plane.transform.rotation).transform.parent = transform;
 
 				// Cell initialization
 				maze[y, x] = new MazeCell(x, y);
@@ -94,7 +98,7 @@ public class HexagonalGrid : MonoBehaviour
 
 	public void CreateSquarePointy()
 	{
-		Diameter = 0;
+		Radius = 0;
 
 		// Maze initialization
 		maze = new MazeCell[Height, Width];
@@ -110,7 +114,7 @@ public class HexagonalGrid : MonoBehaviour
 				GameObject walls = Instantiate(hexagon, pos, Quaternion.Euler(0f, 90f, 0f));
 				walls.transform.parent = transform;
 
-				Instantiate(hexa_plane, pos, Quaternion.identity).transform.parent = transform;
+				Instantiate(hexa_plane, pos + new Vector3(0, .3f, 0), Quaternion.identity).transform.parent = transform;
 
 				// Cell initialization
 				maze[y, x] = new MazeCell(x, y);
@@ -147,7 +151,7 @@ public class HexagonalGrid : MonoBehaviour
 				GameObject walls = Instantiate(hexagon, pos, Quaternion.identity);
 				walls.transform.parent = transform;
 
-				Instantiate(hexa_plane, pos, hexa_plane.transform.rotation).transform.parent = transform;
+				Instantiate(hexa_plane, pos + new Vector3(0, .3f, 0), hexa_plane.transform.rotation).transform.parent = transform;
 
 				// Cell initialization
 				maze[y, x] = new MazeCell(x, y);
@@ -183,7 +187,7 @@ public class HexagonalGrid : MonoBehaviour
 				GameObject walls = Instantiate(hexagon, pos, Quaternion.Euler(0f, 90f, 0f));
 				walls.transform.parent = transform;
 
-				Instantiate(hexa_plane, pos, Quaternion.identity).transform.parent = transform;
+				Instantiate(hexa_plane, pos + new Vector3(0, .3f, 0), Quaternion.identity).transform.parent = transform;
 
 				// Cell initialization
 				maze[y, x] = new MazeCell(x, y);

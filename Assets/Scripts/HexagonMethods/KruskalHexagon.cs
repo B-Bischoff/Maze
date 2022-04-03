@@ -26,9 +26,9 @@ public class KruskalHexagon : MonoBehaviour
             this.set = set;
             Vector3 pos;
             if (_hexagonalShape == 0)
-                pos = new Vector3(x * hexWidth, .1f, y * hexHeight + .5f * (x % 2));
+                pos = new Vector3(x * hexWidth, .31f, y * hexHeight + .5f * (x % 2));
             else
-                pos = new Vector3(x * hexHeight + .5f * (y % 2), .1f, y * hexWidth);
+                pos = new Vector3(x * hexHeight + .5f * (y % 2), .31f, y * hexWidth);
             this.plane = Instantiate(visualPlane, pos, Quaternion.Euler(0f, 90f * (_hexagonalShape + 1), 0f));
             this.plane.transform.parent = parent.transform;
             this.color = new Color(
@@ -45,6 +45,7 @@ public class KruskalHexagon : MonoBehaviour
     }
     private void Update()
     {
+        _delay = grid.Delay;
         if (_isGenerating == false && grid.maze != null) // Wait for HexagonalGrid to generate grid
         {
             _isGenerating = true;
@@ -63,9 +64,9 @@ public class KruskalHexagon : MonoBehaviour
                 if (maze[y, x] != null)
 				{
                     if (_visualMode)
-                        newMaze[y, x] = new KruskalCell(maze[y, x], y * _height + x, visualPlane, gameObject, _hexagonalShape, grid.hexWidth, grid.hexHeight);
+                        newMaze[y, x] = new KruskalCell(maze[y, x], y * _width + x, visualPlane, gameObject, _hexagonalShape, grid.hexWidth, grid.hexHeight);
                     else
-                        newMaze[y, x] = new KruskalCell(maze[y, x], y * _height + x);
+                        newMaze[y, x] = new KruskalCell(maze[y, x], y * _width + x);
                 }
             }
         }
@@ -100,7 +101,6 @@ public class KruskalHexagon : MonoBehaviour
             KruskalCell neighborCell = GetNeighborCell(cell);
             if (neighborCell != null)
             {
-                Debug.Log(cell.set + " " + neighborCell.set);
                 AssignNewSet(cell, neighborCell);
                 RemoveWalls(cell, neighborCell);
                 yield return new WaitForSeconds(_delay);

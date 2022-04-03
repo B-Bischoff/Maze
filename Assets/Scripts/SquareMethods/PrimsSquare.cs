@@ -53,6 +53,7 @@ public class PrimsSquare : MonoBehaviour
 
     private void Update()
     {
+        delay = Grid.Delay;
         if (_isGenerating == false && Grid.maze != null) // Wait for RectangularGrid to generate grid
         {
             _isGenerating = true;

@@ -10,7 +10,6 @@ public class RecursiveSquare : MonoBehaviour
     [Header("Algorithm parameters")]
     private int maxDepth;
     private int width, height;
-    private float delay = 0.025f;
 
     private bool randomChamber;
 
@@ -71,7 +70,7 @@ public class RecursiveSquare : MonoBehaviour
 
     IEnumerator CreateMaze(Vector2 bottomLeft, Vector2 topRight, int depth)
 	{
-        if (depth == 0)
+        if (depth <= 0)
             yield break;
 
         if (topRight.x - bottomLeft.x < 3 || topRight.y - bottomLeft.y < 3)
@@ -122,14 +121,14 @@ public class RecursiveSquare : MonoBehaviour
             Vector3 pos = new Vector3(x, 0, i + .5f);
             if (i != vertPassage && (i != randomPassage || randomPassagePos > 0.5f))
                 Instantiate(vertWall, pos, Quaternion.identity).transform.parent = gameObject.transform;
-            yield return new WaitForSeconds(delay);
+            yield return new WaitForSeconds(Grid.Delay);
         }
         for (int i = (int)bottomLeft.x; i < topRight.x; i++) // Creating horizontal walls according to passages
         {
             Vector3 pos = new Vector3(i + .5f, 0, y);
             if (i != horPassage && (i != randomPassage || randomPassagePos < 0.5f))
                 Instantiate(horWall, pos, Quaternion.identity).transform.parent = gameObject.transform;
-            yield return new WaitForSeconds(delay);
+            yield return new WaitForSeconds(Grid.Delay);
         }
 
         depth--;

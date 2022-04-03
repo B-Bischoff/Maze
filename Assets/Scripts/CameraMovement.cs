@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class CameraMovement : MonoBehaviour
 {
@@ -22,6 +23,8 @@ public class CameraMovement : MonoBehaviour
 
     public void Update()
     {
+        if (IsPointerOverUIElements())
+            return;
 
         //Zoom
         if (Input.GetAxis("Mouse ScrollWheel") != 0)
@@ -29,8 +32,12 @@ public class CameraMovement : MonoBehaviour
             if (_offset < 0)
             {
                 _offset += Input.GetAxis("Mouse ScrollWheel") * zoomSpeed;
-                _cam.transform.position = _targetPosition;
-                _cam.transform.Translate(new Vector3(0, 0, _offset));
+                //_cam.transform.position = _targetPosition;
+                if (_cam.orthographicSize >= .2f)
+                    _cam.orthographicSize -= (5f * Input.GetAxis("Mouse ScrollWheel"));
+                else
+                    _cam.orthographicSize = .2f;
+                //_cam.transform.Translate(new Vector3(0, 0, _offset));
                 _previousPosition = _cam.ScreenToViewportPoint(Input.mousePosition);
             }
             else //Clamping the offset to -1 => Can't enter "in" the terrain with the camera
@@ -78,5 +85,18 @@ public class CameraMovement : MonoBehaviour
             _offset = -Vector3.Distance(_targetPosition, _cam.transform.position);
             _previousPosition = _cam.ScreenToViewportPoint(Input.mousePosition);
         }
+    }
+    private bool IsPointerOverUIElements()
+    {
+        var eventData = new PointerEventData(EventSystem.current);
+        eventData.position = Input.mousePosition;
+        var results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(eventData, results);
+
+        foreach (RaycastResult result in results)
+            if (result.gameObject.GetComponent<RectTransform>() != null)
+                return true;
+
+        return false;
     }
 }

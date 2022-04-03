@@ -29,6 +29,7 @@ public class PrimsHexagon : MonoBehaviour
 
     private void Update()
     {
+        _delay = grid.Delay;
         if (_isGenerating == false && grid.maze != null) // Wait for HexagonalGrid to generate grid
         {
             _isGenerating = true;
@@ -72,7 +73,7 @@ public class PrimsHexagon : MonoBehaviour
         int y_start = 0;
         int x_start = 0;
 
-        if (grid.Diameter != 0)
+        if (grid.Radius != 0)
         {
             y_start = _height / 2;
             x_start = _width / 2;
@@ -83,7 +84,7 @@ public class PrimsHexagon : MonoBehaviour
         if (_visualMode)
         {
             if (_visualMode)
-                DisplayVisual(visitedVisu, x_start, y_start, .1f);
+                DisplayVisual(visitedVisu, x_start, y_start, .31f);
         }
 
         AddNeighboursToFrontier(_maze[y_start, x_start], frontierList);
@@ -161,7 +162,7 @@ public class PrimsHexagon : MonoBehaviour
         list.Add(cell);
 
         if (_visualMode)
-            DisplayVisual(frontierVisu, cell.x, cell.y, .09f);
+            DisplayVisual(frontierVisu, cell.x, cell.y, .305f);
     }
 
     void ConnectToNeighbor(PrimsCell cell)
@@ -217,7 +218,7 @@ public class PrimsHexagon : MonoBehaviour
             return ;
 
         if (_visualMode)
-            DisplayVisual(visitedVisu, x, y, .1f);
+            DisplayVisual(visitedVisu, x, y, .31f);
 
         if (list.Count > 0)
             RemoveWalls(cell, list[Random.Range(0, list.Count)]);

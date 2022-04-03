@@ -30,6 +30,7 @@ public class BetterRecursiveHexagon : MonoBehaviour
 
     private void Update()
     {
+        _delay = grid.Delay;
         if (_isGenerating == false && grid.maze != null) // Wait for HexagonalGrid to generate grid
         {
             _isGenerating = true;
@@ -61,8 +62,8 @@ public class BetterRecursiveHexagon : MonoBehaviour
         _height = grid.Height;
         _width = grid.Width;
         _visualMode = grid.visualMode;
+        maxDepth = grid.MaxDepth;
         _hexagonalShape = ((int)grid.GridMode) % 2;
-        Debug.Log(_hexagonalShape);
 
         List<BetterRecurCell> initialRegion = new List<BetterRecurCell>();
 
@@ -341,9 +342,9 @@ public class BetterRecursiveHexagon : MonoBehaviour
         {
             Vector3 pos;
             if (_hexagonalShape == 0)
-                pos = new Vector3(cell.x * grid.hexWidth, .1f, cell.y * grid.hexHeight + .5f * (cell.x % 2));
+                pos = new Vector3(cell.x * grid.hexWidth, .31f, cell.y * grid.hexHeight + .5f * (cell.x % 2));
             else
-                pos = new Vector3(cell.x * grid.hexHeight + .5f * (cell.y % 2), .1f, cell.y * grid.hexWidth);
+                pos = new Vector3(cell.x * grid.hexHeight + .5f * (cell.y % 2), .31f, cell.y * grid.hexWidth);
 
             if (newSubregion == 2)
                 Instantiate(planeA, pos, Quaternion.Euler(0f, 90f * (_hexagonalShape + 1), 0f)).transform.parent = transform;
@@ -359,9 +360,9 @@ public class BetterRecursiveHexagon : MonoBehaviour
         wall.transform.localScale = new Vector3(.7f, .7f, .7f);
 
         if (_hexagonalShape == 0)
-            pos = new Vector3(cell.x * grid.hexWidth, .7f, cell.y * grid.hexHeight + .5f * (cell.x % 2));
+            pos = new Vector3(cell.x * grid.hexWidth, 1f, cell.y * grid.hexHeight + .5f * (cell.x % 2));
         else
-            pos = new Vector3(cell.x * grid.hexHeight + .5f * (cell.y % 2), .1f, cell.y * grid.hexWidth);
+            pos = new Vector3(cell.x * grid.hexHeight + .5f * (cell.y % 2), 1f, cell.y * grid.hexWidth);
         CreatedWall = Instantiate(wall, pos, Quaternion.Euler(0, wall.transform.eulerAngles.y + angle, 0));
         CreatedWall.transform.parent = transform;
         walls.Add(CreatedWall);

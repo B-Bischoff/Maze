@@ -31,7 +31,7 @@ public class BetterRecursiveSquare : MonoBehaviour
             this.walls = new GameObject[4];
 		}
 	}
-
+    
     void Start()
     {
         height = Grid.Height;
@@ -65,7 +65,7 @@ public class BetterRecursiveSquare : MonoBehaviour
         StartCoroutine(CreateMaze(initialRegion, 0));
     }
 
-    bool IsInRegionBorders(BetterRecurCell cell, List<BetterRecurCell> regionList)
+	bool IsInRegionBorders(BetterRecurCell cell, List<BetterRecurCell> regionList)
 	{
         int x = cell.x;
         int y = cell.y;

@@ -29,6 +29,7 @@ public class BacktrackerHexagon : MonoBehaviour
 
 	private void Update()
 	{
+        _delay = grid.Delay;
         if (_isGenerating == false && grid.maze != null) // Wait for HexagonalGrid to generate grid
         {
             _isGenerating = true;
@@ -57,7 +58,6 @@ public class BacktrackerHexagon : MonoBehaviour
 		_width = grid.Width;
         _visualMode = grid.visualMode;
         _hexagonalShape = ((int)grid.GridMode) % 2;
-
         _maze = ConvertCellToBacktracker(grid.maze);
 
         CreateMaze();
@@ -70,7 +70,7 @@ public class BacktrackerHexagon : MonoBehaviour
         int y_start = 0;
         int x_start = 0;
 
-        if (grid.Diameter != 0)
+        if (grid.Radius != 0)
         {
             y_start = _height / 2;
             x_start = _width / 2;
@@ -78,7 +78,7 @@ public class BacktrackerHexagon : MonoBehaviour
 
         if (_visualMode)
         {
-            Vector3 pos = new Vector3(x_start, .1f, y_start);
+            Vector3 pos = new Vector3(x_start, .31f, y_start);
             _visualPlane = Instantiate(visualPlane, pos, Quaternion.Euler(0f, 90f * (_hexagonalShape + 1), 0f));
         }
 
@@ -172,9 +172,9 @@ public class BacktrackerHexagon : MonoBehaviour
                 {
                     Vector3 pos;
                     if (_hexagonalShape == 0)
-                        pos = new Vector3(neighborCell.x * grid.hexWidth, .1f, neighborCell.y * grid.hexHeight + .5f * (neighborCell.x % 2));
+                        pos = new Vector3(neighborCell.x * grid.hexWidth, .31f, neighborCell.y * grid.hexHeight + .5f * (neighborCell.x % 2));
                     else
-                        pos = new Vector3(neighborCell.x * grid.hexHeight + .5f * (neighborCell.y % 2), .1f, neighborCell.y * grid.hexWidth);
+                        pos = new Vector3(neighborCell.x * grid.hexHeight + .5f * (neighborCell.y % 2), .31f, neighborCell.y * grid.hexWidth);
                     _visualPlane.transform.position = pos;
                 }
                 yield return new WaitForSeconds(_delay);
