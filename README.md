@@ -2,6 +2,8 @@
 
 A little experimentation with maze generation in Unity.
 
+You can find the project documentation here :
+https://b-bischoff.github.io/web/labyrinthes.html
 
 Here is a list of the differents algorithms used : 
 
@@ -11,7 +13,7 @@ Here is a list of the differents algorithms used :
 - Recursive
 - Better recursive (by Jamis Buck)
 
-The mazes can be square or hexagonal shaped 
+The mazes can be square or hexagonal shaped
 
 Here are some photos of the results :
 
